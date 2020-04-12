@@ -4,7 +4,7 @@ function calcIBRT(currentlyInfected, timeToElapse) {
 
 const calcHBBRT = (totalHospitalBeds, severeCasesByRequestedTime) => {
   const availableHospitalBeds = totalHospitalBeds * 0.35;
-  const futureBeds = availableHospitalBeds-severeCasesByRequestedTime;
+  const futureBeds = availableHospitalBeds - severeCasesByRequestedTime;
   return Math.floor(futureBeds);
 };
 
@@ -25,10 +25,9 @@ const covid19ImpactEstimator = (data) => {
     currentlyInfected: data.reportedCases * 10
   };
 
-  impact.infectionsByRequestedTime =
-  calcIBRT(impact.currentlyInfected, data.timeToElapse);
+  impact.infectionsByRequestedTime = calcIBRT(impact.currentlyInfected, data.timeToElapse);
   impact.severeCasesByRequestedTime = Math.floor(impact.infectionsByRequestedTime * 0.15);
-  impact.hospitalBedsByRequestedTime = calcHBBRT(data.totalHospitalBeds, 
+  impact.hospitalBedsByRequestedTime = calcHBBRT(data.totalHospitalBeds,
     impact.severeCasesByRequestedTime);
   impact.casesForICUByRequestedTime = Math.floor(impact.infectionsByRequestedTime * 0.05);
   impact.casesForVentilatorsByRequestedTime = Math.floor(impact.infectionsByRequestedTime * 0.02);
@@ -46,14 +45,14 @@ const covid19ImpactEstimator = (data) => {
   const value0 = severeImpact.infectionsByRequestedTime;
   severeImpact.severeCasesByRequestedTime = Math.floor(value0 * 0.15);
   severeImpact.hospitalBedsByRequestedTime = calcHBBRT(data.totalHospitalBeds,
-    severeImpact.severeCasesByRequestedTime);
-  severeImpact.casesForICUByRequestedTime =
-  Math.floor(severeImpact.infectionsByRequestedTime * 0.05);
+  severeImpact.severeCasesByRequestedTime);
+  const valueVal = severeImpact.infectionsByRequestedTime * 0.05;
+  severeImpact.casesForICUByRequestedTime = Math.floor(valueVal);
   const value1 = severeImpact.infectionsByRequestedTime * 0.02;
-  severeImpact.casesForVentilatorsByRequestedTime=Math.floor(value1);
+  severeImpact.casesForVentilatorsByRequestedTime = Math.floor(value1);
   severeImpact.dollarsInFlight = calcDIF(severeImpact.infectionsByRequestedTime,
   data.region.avgDailyIncomePopulation, data.region.avgDailyIncomeInUSD, data.timeToElapse);
-  
+
   output.impact = impact;
 
   output.severeImpact = severeImpact;
