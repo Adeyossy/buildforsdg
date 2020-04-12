@@ -34,24 +34,24 @@ const covid19ImpactEstimator = (data) => {
   const avgDly = data.region.avgDailyIncomePopulation;
   const money = data.region.avgDailyIncomeInUSD;
   impact.dollarsInFlight = calcDIF(impact.infectionsByRequestedTime,
-  avgDly, money, data.timeToElapse);
+    avgDly, money, data.timeToElapse);
 
   const severeImpact = {
     currentlyInfected: data.reportedCases * 50
   };
 
   severeImpact.infectionsByRequestedTime = calcIBRT(severeImpact.currentlyInfected,
-  data.timeToElapse);
+    data.timeToElapse);
   const value0 = severeImpact.infectionsByRequestedTime;
   severeImpact.severeCasesByRequestedTime = Math.floor(value0 * 0.15);
   severeImpact.hospitalBedsByRequestedTime = calcHBBRT(data.totalHospitalBeds,
-  severeImpact.severeCasesByRequestedTime);
+    severeImpact.severeCasesByRequestedTime);
   const valueVal = severeImpact.infectionsByRequestedTime * 0.05;
   severeImpact.casesForICUByRequestedTime = Math.floor(valueVal);
   const value1 = severeImpact.infectionsByRequestedTime * 0.02;
   severeImpact.casesForVentilatorsByRequestedTime = Math.floor(value1);
   severeImpact.dollarsInFlight = calcDIF(severeImpact.infectionsByRequestedTime,
-  data.region.avgDailyIncomePopulation, data.region.avgDailyIncomeInUSD, data.timeToElapse);
+    data.region.avgDailyIncomePopulation, data.region.avgDailyIncomeInUSD, data.timeToElapse);
 
   output.impact = impact;
 
