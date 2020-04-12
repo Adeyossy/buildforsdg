@@ -6,12 +6,12 @@ const calculateHospitalBedsByRequestedTime = (totalHospitalBeds, severeCasesByRe
   const availableHospitalBeds = totalHospitalBeds * 0.35;
   const futureBeds = availableHospitalBeds -  - severeCasesByRequestedTime;
   return Math.floor(futureBeds);
-}
+};
 
-const calculateDollarsInFlight = (infectionsByRequestedTime, percentage, avgDailyIncome, timeToElapse) => {
-  const dollarsInFlight = infectionsByRequestedTime * percentage * avgDailyIncome / timeToElapse;
+const calculateDollarsInFlight = (infectnsByRqstdTm, percent, avgDailyIncome, timeToElapse) => {
+  const dollarsInFlight = (infectnsByRqstdTm * percent * avgDailyIncome) / timeToElapse;
   return Math.floor(dollarsInFlight);
-}
+};
 
 const covid19ImpactEstimator = (data) => {
     //don't forget to remove the nodejs test
@@ -33,30 +33,40 @@ const covid19ImpactEstimator = (data) => {
 
   output.data = data;
 
-  if (data.periodType === 'weeks') data.timeToElapse = data.timeToElapse * 7;
-  if (data.periodType === 'months') data.timeToElapse = data.timeToElapse * 30;
+  if (data.periodType === 'weeks') data.timeToElapse *= 7;
+  if (data.periodType === 'months') data.timeToElapse *= 30;
 
   const impact = {
     currentlyInfected: data.reportedCases * 10
   };
 
-  impact.infectionsByRequestedTime = calculateInfectionsByRequestedTime(impact.currentlyInfected, data.timeToElapse);
+  impact.infectionsByRequestedTime =
+  calculateInfectionsByRequestedTime(impact.currentlyInfected, data.timeToElapse);
   impact.severeCasesByRequestedTime = Math.floor(impact.infectionsByRequestedTime * 0.15);
-  impact.hospitalBedsByRequestedTime = calculateHospitalBedsByRequestedTime(data.totalHospitalBeds, impact.severeCasesByRequestedTime);
+  impact.hospitalBedsByRequestedTime =
+  calculateHospitalBedsByRequestedTime(data.totalHospitalBeds, impact.severeCasesByRequestedTime);
   impact.casesForICUByRequestedTime = Math.floor(impact.infectionsByRequestedTime * 0.05);
   impact.casesForVentilatorsByRequestedTime = Math.floor(impact.infectionsByRequestedTime * 0.02);
-  impact.dollarsInFlight = calculateDollarsInFlight(impact.infectionsByRequestedTime, data.region.avgDailyIncomePopulation, data.region.avgDailyIncomeInUSD, data.timeToElapse);
+  impact.dollarsInFlight = calculateDollarsInFlight(impact.infectionsByRequestedTime,
+  data.region.avgDailyIncomePopulation, data.region.avgDailyIncomeInUSD, data.timeToElapse);
 
   const severeImpact = {
     currentlyInfected: data.reportedCases * 50
-  }
+  };
 
-  severeImpact.infectionsByRequestedTime = calculateInfectionsByRequestedTime(severeImpact.currentlyInfected, data.timeToElapse);
-  severeImpact.severeCasesByRequestedTime = Math.floor(severeImpact.infectionsByRequestedTime * 0.15);
-  severeImpact.hospitalBedsByRequestedTime = calculateHospitalBedsByRequestedTime(data.totalHospitalBeds, severeImpact.severeCasesByRequestedTime);
-  severeImpact.casesForICUByRequestedTime = Math.floor(severeImpact.infectionsByRequestedTime * 0.05);
-  severeImpact.casesForVentilatorsByRequestedTime = Math.floor(severeImpact.infectionsByRequestedTime * 0.02);
-  severeImpact.dollarsInFlight = calculateDollarsInFlight(severeImpact.infectionsByRequestedTime, data.region.avgDailyIncomePopulation, data.region.avgDailyIncomeInUSD, data.timeToElapse);
+  severeImpact.infectionsByRequestedTime =
+  calculateInfectionsByRequestedTime(severeImpact.currentlyInfected, data.timeToElapse);
+  severeImpact.severeCasesByRequestedTime =
+  Math.floor(severeImpact.infectionsByRequestedTime * 0.15);
+  severeImpact.hospitalBedsByRequestedTime =
+  calculateHospitalBedsByRequestedTime(data.totalHospitalBeds,
+    severeImpact.severeCasesByRequestedTime);
+  severeImpact.casesForICUByRequestedTime =
+  Math.floor(severeImpact.infectionsByRequestedTime * 0.05);
+  severeImpact.casesForVentilatorsByRequestedTime =
+  Math.floor(severeImpact.infectionsByRequestedTime * 0.02);
+  severeImpact.dollarsInFlight = calculateDollarsInFlight(severeImpact.infectionsByRequestedTime,
+  data.region.avgDailyIncomePopulation, data.region.avgDailyIncomeInUSD, data.timeToElapse);
   
   output.impact = impact;
 
