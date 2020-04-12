@@ -1,16 +1,16 @@
 function calculateInfectionsByRequestedTime(currentlyInfected, timeToElapse) {
-    return currentlyInfected * Math.pow(2, Math.floor(timeToElapse / 3));
+  return currentlyInfected * 2 ** Math.floor(timeToElapse / 3);
 }
 
 const calculateHospitalBedsByRequestedTime = (totalHospitalBeds, severeCasesByRequestedTime) => {
-    let availableHospitalBeds = totalHospitalBeds * 0.35;
-    let futureBeds = availableHospitalBeds -  - severeCasesByRequestedTime;
-    return Math.floor(futureBeds);
+  const availableHospitalBeds = totalHospitalBeds * 0.35;
+  const futureBeds = availableHospitalBeds -  - severeCasesByRequestedTime;
+  return Math.floor(futureBeds);
 }
 
 const calculateDollarsInFlight = (infectionsByRequestedTime, percentage, avgDailyIncome, timeToElapse) => {
-    let dollarsInFlight = infectionsByRequestedTime * percentage * avgDailyIncome / timeToElapse;
-    return Math.floor(dollarsInFlight);
+  const dollarsInFlight = infectionsByRequestedTime * percentage * avgDailyIncome / timeToElapse;
+  return Math.floor(dollarsInFlight);
 }
 
 const covid19ImpactEstimator = (data) => {
@@ -29,46 +29,40 @@ const covid19ImpactEstimator = (data) => {
         totalHospitalBeds: 1380614
     } */
 
-    let output = {};
+  const output = {};
 
-    output.data = data;
+  output.data = data;
 
-    if (data.periodType == "weeks") data.timeToElapse = data.timeToElapse * 7;
-    if (data.periodType == "months") data.timeToElapse = data.timeToElapse * 30;
+  if (data.periodType === 'weeks') data.timeToElapse = data.timeToElapse * 7;
+  if (data.periodType === 'months') data.timeToElapse = data.timeToElapse * 30;
 
-    let impact = {
-        currentlyInfected: data.reportedCases * 10,
-    };
+  const impact = {
+    currentlyInfected: data.reportedCases * 10
+  };
 
-    impact.infectionsByRequestedTime = calculateInfectionsByRequestedTime(impact.currentlyInfected, data.timeToElapse);
-    impact.severeCasesByRequestedTime = Math.floor(impact.infectionsByRequestedTime * 0.15);
-    impact.hospitalBedsByRequestedTime = calculateHospitalBedsByRequestedTime(data.totalHospitalBeds, impact.severeCasesByRequestedTime);
-    impact.casesForICUByRequestedTime = Math.floor(impact.infectionsByRequestedTime * 0.05);
-    impact.casesForVentilatorsByRequestedTime = Math.floor(impact.infectionsByRequestedTime * 0.02);
-    impact.dollarsInFlight = calculateDollarsInFlight(impact.infectionsByRequestedTime, data.region.avgDailyIncomePopulation, data.region.avgDailyIncomeInUSD, data.timeToElapse);
+  impact.infectionsByRequestedTime = calculateInfectionsByRequestedTime(impact.currentlyInfected, data.timeToElapse);
+  impact.severeCasesByRequestedTime = Math.floor(impact.infectionsByRequestedTime * 0.15);
+  impact.hospitalBedsByRequestedTime = calculateHospitalBedsByRequestedTime(data.totalHospitalBeds, impact.severeCasesByRequestedTime);
+  impact.casesForICUByRequestedTime = Math.floor(impact.infectionsByRequestedTime * 0.05);
+  impact.casesForVentilatorsByRequestedTime = Math.floor(impact.infectionsByRequestedTime * 0.02);
+  impact.dollarsInFlight = calculateDollarsInFlight(impact.infectionsByRequestedTime, data.region.avgDailyIncomePopulation, data.region.avgDailyIncomeInUSD, data.timeToElapse);
 
-    console.log("evaluating math value ", Math.pow(2, Math.floor(data.timeToElapse / 3)));
+  const severeImpact = {
+    currentlyInfected: data.reportedCases * 50
+  }
 
-    let severeImpact = {
-        currentlyInfected: data.reportedCases * 50,
-    }
+  severeImpact.infectionsByRequestedTime = calculateInfectionsByRequestedTime(severeImpact.currentlyInfected, data.timeToElapse);
+  severeImpact.severeCasesByRequestedTime = Math.floor(severeImpact.infectionsByRequestedTime * 0.15);
+  severeImpact.hospitalBedsByRequestedTime = calculateHospitalBedsByRequestedTime(data.totalHospitalBeds, severeImpact.severeCasesByRequestedTime);
+  severeImpact.casesForICUByRequestedTime = Math.floor(severeImpact.infectionsByRequestedTime * 0.05);
+  severeImpact.casesForVentilatorsByRequestedTime = Math.floor(severeImpact.infectionsByRequestedTime * 0.02);
+  severeImpact.dollarsInFlight = calculateDollarsInFlight(severeImpact.infectionsByRequestedTime, data.region.avgDailyIncomePopulation, data.region.avgDailyIncomeInUSD, data.timeToElapse);
+  
+  output.impact = impact;
 
-    severeImpact.infectionsByRequestedTime = calculateInfectionsByRequestedTime(severeImpact.currentlyInfected, data.timeToElapse);
-    severeImpact.severeCasesByRequestedTime = Math.floor(severeImpact.infectionsByRequestedTime * 0.15);
-    severeImpact.hospitalBedsByRequestedTime = calculateHospitalBedsByRequestedTime(data.totalHospitalBeds, severeImpact.severeCasesByRequestedTime);
-    severeImpact.casesForICUByRequestedTime = Math.floor(severeImpact.infectionsByRequestedTime * 0.05);
-    severeImpact.casesForVentilatorsByRequestedTime = Math.floor(severeImpact.infectionsByRequestedTime * 0.02);
-    severeImpact.dollarsInFlight = calculateDollarsInFlight(severeImpact.infectionsByRequestedTime, data.region.avgDailyIncomePopulation, data.region.avgDailyIncomeInUSD, data.timeToElapse);
+  output.severeImpact = severeImpact;
 
-    output.impact = impact;
-
-    output.severeImpact = severeImpact;
-
-    console.log("output is ", output);
-
-    return output;
+  return output;
 };
-
-// covid19ImpactEstimator({});
 
 export default covid19ImpactEstimator;
