@@ -3,9 +3,9 @@ function calcIBRT(currentlyInfected, timeToElapse) {
 }
 
 const calcHBBRT = (totalHospitalBeds, severeCasesByRequestedTime) => {
-  const availableHospitalBeds = totalHospitalBeds * 0.35;
+  const availableHospitalBeds = Math.floor(totalHospitalBeds * 0.35);
   const futureBeds = availableHospitalBeds - severeCasesByRequestedTime;
-  return Math.floor(futureBeds);
+  return futureBeds;
 };
 
 const calcDIF = (infectnsByRqstdTm, percent, avgDailyIncome, timeToElapse) => {
