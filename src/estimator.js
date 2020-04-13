@@ -1,16 +1,16 @@
 function calcIBRT(currentlyInfected, timeToElapse) {
-  return currentlyInfected * 2 ** Math.floor(timeToElapse / 3);
+  return currentlyInfected * 2 ** Math.trunc(timeToElapse / 3);
 }
 
 const calcHBBRT = (totalHospitalBeds, severeCasesByRequestedTime) => {
-  const availableHospitalBeds = Math.floor(totalHospitalBeds * 0.35);
+  const availableHospitalBeds = Math.trunc(totalHospitalBeds * 0.35);
   const futureBeds = availableHospitalBeds - severeCasesByRequestedTime;
   return futureBeds;
 };
 
 const calcDIF = (infectnsByRqstdTm, percent, avgDailyIncome, timeToElapse) => {
   const dollarsInFlight = (infectnsByRqstdTm * percent * avgDailyIncome) / timeToElapse;
-  return Math.floor(dollarsInFlight);
+  return Math.trunc(dollarsInFlight);
 };
 
 const covid19ImpactEstimator = (data) => {
@@ -26,11 +26,11 @@ const covid19ImpactEstimator = (data) => {
   };
 
   impact.infectionsByRequestedTime = calcIBRT(impact.currentlyInfected, data.timeToElapse);
-  impact.severeCasesByRequestedTime = Math.floor(impact.infectionsByRequestedTime * 0.15);
+  impact.severeCasesByRequestedTime = Math.trunc(impact.infectionsByRequestedTime * 0.15);
   impact.hospitalBedsByRequestedTime = calcHBBRT(data.totalHospitalBeds,
     impact.severeCasesByRequestedTime);
-  impact.casesForICUByRequestedTime = Math.floor(impact.infectionsByRequestedTime * 0.05);
-  impact.casesForVentilatorsByRequestedTime = Math.floor(impact.infectionsByRequestedTime * 0.02);
+  impact.casesForICUByRequestedTime = Math.trunc(impact.infectionsByRequestedTime * 0.05);
+  impact.casesForVentilatorsByRequestedTime = Math.trunc(impact.infectionsByRequestedTime * 0.02);
   const avgDly = data.region.avgDailyIncomePopulation;
   const money = data.region.avgDailyIncomeInUSD;
   impact.dollarsInFlight = calcDIF(impact.infectionsByRequestedTime,
@@ -43,13 +43,13 @@ const covid19ImpactEstimator = (data) => {
   severeImpact.infectionsByRequestedTime = calcIBRT(severeImpact.currentlyInfected,
     data.timeToElapse);
   const value0 = severeImpact.infectionsByRequestedTime;
-  severeImpact.severeCasesByRequestedTime = Math.floor(value0 * 0.15);
+  severeImpact.severeCasesByRequestedTime = Math.trunc(value0 * 0.15);
   severeImpact.hospitalBedsByRequestedTime = calcHBBRT(data.totalHospitalBeds,
     severeImpact.severeCasesByRequestedTime);
   const valueVal = severeImpact.infectionsByRequestedTime * 0.05;
-  severeImpact.casesForICUByRequestedTime = Math.floor(valueVal);
+  severeImpact.casesForICUByRequestedTime = Math.trunc(valueVal);
   const value1 = severeImpact.infectionsByRequestedTime * 0.02;
-  severeImpact.casesForVentilatorsByRequestedTime = Math.floor(value1);
+  severeImpact.casesForVentilatorsByRequestedTime = Math.trunc(value1);
   severeImpact.dollarsInFlight = calcDIF(severeImpact.infectionsByRequestedTime,
     data.region.avgDailyIncomePopulation, data.region.avgDailyIncomeInUSD, data.timeToElapse);
 
