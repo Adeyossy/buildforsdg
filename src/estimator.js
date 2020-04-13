@@ -3,9 +3,9 @@ function calcIBRT(currentlyInfected, timeToElapse) {
 }
 
 const calcHBBRT = (totalHospitalBeds, severeCasesByRequestedTime) => {
-  const availableHospitalBeds = Math.trunc(totalHospitalBeds * 0.35);
+  const availableHospitalBeds = totalHospitalBeds * 0.35;
   const futureBeds = availableHospitalBeds - severeCasesByRequestedTime;
-  return futureBeds;
+  return Math.trunc(futureBeds);
 };
 
 const calcDIF = (infectnsByRqstdTm, percent, avgDailyIncome, timeToElapse) => {
@@ -28,7 +28,7 @@ const covid19ImpactEstimator = (data) => {
   impact.infectionsByRequestedTime = calcIBRT(impact.currentlyInfected, data.timeToElapse);
   impact.severeCasesByRequestedTime = Math.trunc(impact.infectionsByRequestedTime * 0.15);
   impact.hospitalBedsByRequestedTime = calcHBBRT(data.totalHospitalBeds,
-    impact.severeCasesByRequestedTime);
+    impact.infectionsByRequestedTime * 0.15);
   impact.casesForICUByRequestedTime = Math.trunc(impact.infectionsByRequestedTime * 0.05);
   impact.casesForVentilatorsByRequestedTime = Math.trunc(impact.infectionsByRequestedTime * 0.02);
   const avgDly = data.region.avgDailyIncomePopulation;
